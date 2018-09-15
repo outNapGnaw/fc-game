@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="cleartype" content="on">
+    <meta name="MobileOptimized" content="320">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"
+    />
+    <link rel="shortcut icon" href="favicon.png" />
+    <title>红白机模拟器</title>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        a,
+        button,
+        input {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+
+        .nes-intro {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            left: 0px;
+            background: rgba(0, 0, 0, 0.79);
+        }
+
+        .nes-roms,
+        .nes-controls,
+        .nes-status {
+            position: absolute;
+            z-index: 999;
+            top: 50%;
+            text-align: center;
+            width: 100%;
+        }
+
+        .nes-roms {
+            top: 36%;
+        }
+
+        .nes-roms select {
+            height: 34px;
+            font-size: 18px;
+            width: 200px;
+            background: grey;
+        }
+
+        .nes-pause {
+            display: none;
+        }
+
+        .nes-status {
+            top: 60%;
+            color: #fff;
+        }
+
+        .nes-controls input {
+            height: 34px;
+            background: grey;
+            color: #ddd;
+        }
+
+        .nes-show {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            opacity: 0.8;
+            background-color: #f0ad4e;
+            border-color: #eea236;
+            color: #fff;
+        }
+
+        #emulator {
+            z-index: 5;
+        }
+
+        #joystickContent {
+            z-index: 4;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0.3;
+            background: transparent;
+        }
+
+        #joystickCanvas {
+            -webkit-touch-callout: none;
+        }
+
+        .ctrl-start {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            margin-left: -45px;
+            height: 30px;
+            width: 45px;
+            background-color: #337ab7;
+            border-color: #2e6da4;
+            color: #fff;
+            border-radius: 10px;
+        }
+
+        .ctrl-select {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            margin-left: 10px;
+            height: 30px;
+            background-color: #d9534f;
+            border-color: #d43f3a;
+            color: #fff;
+            border-radius: 10px;
+            width: 45px;
+            padding-left: 5px;
+        }
+
+        .ctrl-btnA {
+            position: absolute;
+            bottom: 70px;
+            right: 65px;
+            width: 65px;
+            height: 65px;
+            background: url(ctrl/img/button.png);
+
+            background-size: 100%;
+            border: none;
+            color: #fff;
+            text-align: center;
+            line-height: 65px;
+        }
+
+        /*.ctrl-btnAA {
+            position: absolute;
+            bottom: 70px;
+            right: 130px;
+            width: 65px;
+            height: 65px;
+            background: url(ctrl/img/button.png);
+
+            background-size: 100%;
+            border: none;
+            color: #fff;
+            text-align: center;
+            line-height: 65px;
+        }
+
+        .ctrl-btnAA {
+            bottom: 0px;
+        }*/
+
+        .ctrl-btnBB,
+        .ctrl-btnB {
+            position: absolute;
+            bottom: 70px;
+            right: 0px;
+            background: url(ctrl/img/button.png);
+            width: 65px;
+            height: 65px;
+            background-size: 100%;
+            border: none;
+            color: #fff;
+            text-align: center;
+            line-height: 65px;
+        }
+
+        .ctrl-btnBB {
+            bottom: 0;
+        }
+
+        .ctrl-btnAABB,
+        .ctrl-btnAB {
+            position: absolute;
+            bottom: 0px;
+            right: 30px;
+            background: url(ctrl/img/button.png);
+            width: 65px;
+            height: 65px;
+            background-size: 100%;
+            border: none;
+            color: #fff;
+            text-align: center;
+            line-height: 65px;
+        }
+
+        /*.ctrl-btnAABB {
+            bottom: 0px;
+        }*/
+
+        .weixin,
+        .alipay {
+            width: 100px;
+            height: 100px;
+            z-index: 999;
+            position: absolute;
+        }
+
+        .weixin {
+            left: 0px;
+            top: 50px;
+        }
+
+        .alipay {
+            right: 0px;
+            top: 50px;
+        }
+
+        .pay-tips {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            margin: 0px;
+            font-size: 16px;
+            font-weight: initial;
+            color: #ccc;
+        }
+        a{
+            color: #ccc;
+        }
+        .pay-tips svg {
+            width: 60px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+    <!--<script src="lib/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script type="text/javascript" src="lib/zepto.min.js"></script>
+    <script type="text/javascript" src="lib/zepto.cookie.js"></script>
+    <script type="text/javascript" src="ctrl/js/underscore-min.js"></script>
+    <script type="text/javascript" src="ctrl/js/backbone-min.js"></script>
+    <script src="lib/dynamicaudio-min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="build/jsnes.min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(function () {
+            new JSNES({
+                'ui': $('#emulator').JSNESUI({
+                    "其他": [
+                        ["1944", "roms/1944.nes"],
+                        ["三目童子", "roms/三目童子.nes"],
+                        ["中东战争", "roms/中东战争.nes"],
+                        ["冒险岛2", "roms/冒险岛2.NES"],
+                        ["冒险岛3", "roms/冒险岛3.NES"],
+                        ["冒险岛4", "roms/冒险岛4.nes"],
+                        ["勇者斗恶龙1", "roms/勇者斗恶龙1.nes"],
+                        ["勇者斗恶龙2", "roms/勇者斗恶龙2.nes"],
+                        ["勇者斗恶龙3", "roms/勇者斗恶龙3.nes"],
+                        ["双截龙1", "roms/双截龙1.nes"],
+                        ["双截龙2", "roms/双截龙2.nes"],
+                        ["双截龙3", "roms/双截龙3.nes"],
+                        ["合金装备1", "roms/合金装备1.nes"],
+                        ["合金装备2", "roms/合金装备2.nes"],
+                        ["坦克大战", "roms/坦克大战.nes"],
+                        ["宇宙巡航舰1", "roms/宇宙巡航舰1.nes"],
+                        ["宇宙巡航舰2", "roms/宇宙巡航舰2.nes"],
+                        ["影子传说", "roms/影子传说.nes"],
+                        ["忍者神龟1", "roms/忍者神龟1.NES"],
+                        ["忍者神龟2", "roms/忍者神龟2.NES"],
+                        ["忍者神龟3", "roms/忍者神龟3.NES"],
+                        ["忍者龙剑传1", "roms/忍者龙剑传1.nes"],
+                        ["忍者龙剑传2", "roms/忍者龙剑传2.NES"],
+                        ["忍者龙剑传3", "roms/忍者龙剑传3.nes"],
+                        ["忍者龙牙", "roms/忍者龙牙.nes"],
+                        ["恶魔城1", "roms/恶魔城1.NES"],
+                        ["恶魔城2", "roms/恶魔城2.NES"],
+                        ["恶魔城3", "roms/恶魔城3.NES"],
+                        ["摩登原始人1", "roms/摩登原始人1.nes"],
+                        ["摩登原始人2", "roms/摩登原始人2.nes"],
+                        ["松鼠大作战1", "roms/松鼠大作战1.nes"],
+                        ["松鼠大作战2", "roms/松鼠大作战2.nes"],
+                        ["柯纳米世界1", "roms/柯纳米世界1.nes"],
+                        ["柯纳米世界2", "roms/柯纳米世界2.nes"],
+                        ["水上魂斗罗", "roms/水上魂斗罗.NES"],
+                        ["沙罗曼蛇", "roms/沙罗曼蛇.NES"],
+                        ["洛克人1", "roms/洛克人1.nes"],
+                        ["洛克人2", "roms/洛克人2.NES"],
+                        ["洛克人3", "roms/洛克人3.NES"],
+                        ["洛克人4", "roms/洛克人4.nes"],
+                        ["洛克人5", "roms/洛克人5.NES"],
+                        ["洛克人6", "roms/洛克人6.NES"],
+                        ["炸弹人", "roms/炸弹人.nes"],
+                        ["炸弹人2", "roms/炸弹人2.nes"],
+                        ["空中魂斗罗1", "roms/空中魂斗罗1.NES"],
+                        ["空中魂斗罗2", "roms/空中魂斗罗2.nes"],
+                        ["绿色兵团", "roms/绿色兵团.nes"],
+                        ["蝙蝠侠1", "roms/蝙蝠侠1.nes"],
+                        ["蝙蝠侠2", "roms/蝙蝠侠2.nes"],
+                        ["赤色要塞", "roms/赤色要塞.nes"],
+                        ["超级玛丽1", "roms/超级玛丽1.nes"],
+                        ["超级玛丽2", "roms/超级玛丽2.nes"],
+                        ["超级玛丽3", "roms/超级玛丽3.nes"],
+                        ["踢王", "roms/踢王.NES"],
+                        ["雪人兄弟", "roms/雪人兄弟.NES"],
+                        ["魂斗罗1", "roms/魂斗罗1.nes"],
+                        ["魂斗罗2", "roms/魂斗罗2.nes"],
+                        ["魂斗罗3", "roms/魂斗罗3.nes"]
+                    ],
+                    "动作": [
+                        ["坦克大战", "roms/动作-坦克大战.nes"],
+                        ["飞碟吸坦克", "roms/动作-飞碟吸坦克.nes"],
+                        ["马戏团", "roms/动作-马戏团.nes"],
+                        ["马戏团无限命版", "roms/动作-马戏团无限命版.nes"]
+                    ],
+                    "娱乐": [
+                        ["中国象棋(中文)", "roms/娱乐-中国象棋(中文).nes"],
+                        ["五子棋", "roms/娱乐-五子棋.nes"]
+                    ],
+                    "赛车": [
+                        ["坦克飞机", "roms/赛车-坦克飞机.nes"]
+                    ]
+                })
+            });
+        });
+    </script>
+    <!--[if IE]>
+    <script type="text/vbscript" src="source/jsnes-ie-hacks.vbscript"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="emulator"></div>
+    <div id="joystickContent">
+</body>
+
+</html>
