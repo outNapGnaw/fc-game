@@ -7032,9 +7032,9 @@ if (typeof Zepto !== 'undefined') {
                     }
                 });
 
-                self.buttons.payTips.bind("click", function (x) {
-                    JSNES.store.set("gameCnt", 1)
-                })
+                // self.buttons.payTips.bind("click", function (x) {
+                //     JSNES.store.set("gameCnt", 1)
+                // })
 
                 /*
                  * ROM loading
